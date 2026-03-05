@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+interface Component {
+    oper1()
+    oper2()
+}
+
+class Simple {
+    oper1()
+    oper2()
+}
+
+class Composite {
+
+    oper1()
+    oper2()
+    add(c: Component)
+    remove(c: Component)
+}
+
+Component <|... Simple
+Component <|... Composite
+
+Composite o---> "*" Component: children
+@enduml

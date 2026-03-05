@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+class Creator {
+    +genericOper1()
+    +genericOper2()
+    createProduct()
+}
+
+interface Product {
+    doStuff()
+}
+
+class ConcreteProductA {
+    doStuff()
+}
+
+class ConcreteProductB {
+    doStuff()
+}
+Product <|.. ConcreteProductA
+Product <|.. ConcreteProductB
+
+Creator .> Product
+class ConcreteCreatorA {
+   createProduct()
+}
+
+class ConcreteCreatorB {
+   createProduct()
+}
+
+Creator <|-- ConcreteCreatorA
+Creator <|-- ConcreteCreatorB
+@enduml

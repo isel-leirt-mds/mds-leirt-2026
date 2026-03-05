@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+class Component {
+    oper1()
+    oper2()
+}
+
+class Component1 {
+    oper1()
+    oper2()
+}
+
+class Component2 {
+    oper1()
+    oper2()
+}
+
+class Decorator {
+    Decorator(wrappee : Component)
+    oper1()
+    oper2()
+
+}
+
+Component <|... Component1
+Component <|... Component2
+Component <|... Decorator
+
+Decorator o---> "1" Component: wrappee
+@enduml

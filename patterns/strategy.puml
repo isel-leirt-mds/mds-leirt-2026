@@ -1,0 +1,30 @@
+@startuml
+'skinparam style strictuml
+skinparam classAttributeIconSize 0
+
+class Context {
+ -strategy
+ +Context(strategy)
+ +doSomething()
+}
+
+interface Strategy {
+  +execute(data)
+}
+
+class ConcreteStrategy1 {
+  +execute(data)
+}
+
+class ConcreteStrategy2 {
+  +execute(data)
+}
+
+Strategy <|... ConcreteStrategy1
+Strategy <|... ConcreteStrategy2
+
+Context o--> Strategy : strategy
+
+Client -> Context
+
+@enduml

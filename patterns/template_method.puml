@@ -1,0 +1,27 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+skinparam classAttributeIconSize 0
+
+class AbstractClass {
+    templateMethod()
+    step1()
+    step2()
+    step3()
+}
+
+class Concret1 {
+     step2()
+     step3()
+}
+
+class Concrete2 {
+    step1()
+    step3()
+}
+
+
+AbstractClass <|.. Concret1
+AbstractClass <|.. Concrete2
+
+@enduml

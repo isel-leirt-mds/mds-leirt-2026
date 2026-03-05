@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+skinparam classAttributeIconSize 0
+
+interface Command {
+    execute()
+    undo()
+}
+
+class Document {
+    action()
+}
+
+class ConcreteCmd1 {
+    execute()
+    undo()
+}
+
+class ConcreteCmd2 {
+    execute()
+    undo()
+}
+
+Command <|.. ConcreteCmd1
+Command <|.. ConcreteCmd2
+Invoker o-> Command : command
+App -> Document
+App .> ConcreteCmd1
+App .> ConcreteCmd2
+ConcreteCmd1 ---> Document : receiver
+ConcreteCmd2 ---> Document : receiver
+@enduml

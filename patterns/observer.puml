@@ -1,0 +1,31 @@
+@startuml
+'skinparam style strictuml
+skinparam classAttributeIconSize 0
+
+
+interface Observer {
+  +update(data)
+}
+
+class Subject {
+  -observers : Observer[]
+  +addObserver(o:Observer)
+  +removeObserver(o:Observer)
+  +notifyObservers()
+}
+
+class ConcreteObserver1 {
+  +update(data)
+}
+
+class ConcreteObserver2 {
+  +update(data)
+}
+
+Subject o--> "*" Observer : observers
+Observer <|... ConcreteObserver1
+Observer <|... ConcreteObserver2
+Subject .> ConcreteObserver1
+Subject .> ConcreteObserver2
+
+@enduml

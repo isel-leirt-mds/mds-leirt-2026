@@ -13,3 +13,5 @@ plugins {
 rootProject.name = 'mds-leirt-2026'
 
 include 'lecture-02-18-intro'
+
+include 'lecture-03-04-more-patterns'
