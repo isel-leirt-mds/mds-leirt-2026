@@ -1,0 +1,56 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface AbstractFactory {
+    ProductA createProductA(args...)
+    ProductB createProductB(args...)
+}
+
+class ConcreteFactory1 implements AbstractFactory{
+     ProductA createProductA(args...)
+     ProductB createProductB(args...)
+}
+
+class ConcreteFactory2 implements AbstractFactory {
+    ProductA createProductA(args...)
+    ProductB createProductB(args...)
+}
+
+interface Product {
+    doStuff()
+}
+
+abstract class ProductA implements Product {
+}
+
+abstract class ProductB implements Product {
+}
+
+class ConcreteProductA1 extends ProductA {
+    doStuff()
+}
+
+class ConcreteProductB1 extends ProductB {
+    doStuff()
+}
+
+class ConcreteProductA2 extends ProductA {
+    doStuff()
+}
+
+class ConcreteProductB2 extends ProductB {
+    doStuff()
+}
+
+class Client {
+}
+
+AbstractFactory .> Product : creates
+Client .> AbstractFactory : "call create method"
+
+note top of Client {
+  creates different types of products
+  depending of the concrete factory
+}
+
+@enduml

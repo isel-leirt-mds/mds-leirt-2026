@@ -12,7 +12,7 @@ class Simple {
     oper2()
 }
 
-class Composite {
+class Composite implements Component {
 
     oper1()
     oper2()
@@ -20,8 +20,8 @@ class Composite {
     remove(c: Component)
 }
 
-Component <|... Simple
-Component <|... Composite
+Component <|.. Simple
+
 
 Composite o---> "*" Component: children
 @enduml

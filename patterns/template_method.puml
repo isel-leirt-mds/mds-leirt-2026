@@ -24,4 +24,9 @@ class Concrete2 {
 AbstractClass <|.. Concret1
 AbstractClass <|.. Concrete2
 
+note top of AbstractClass
+    templateMethod calls step operations
+    which are redefined in concrete classes
+end note
+
 @enduml

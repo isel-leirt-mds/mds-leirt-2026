@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface Publisher<T> {
+    void subscribe(Subscriber<T> subscriber);
+    void unSubscribe(Subscriber<T> subscriber);
+    void next(T value);
+    void end();
+}
+
+class ConcretePublisher<T> implements Publisher<T> {
+    void subscribe(Subscriber<T> subscriber);
+    void unSubscribe(Subscriber<T> subscriber);
+    void next(T value);
+    void end();
+}
+
+interface Subscriber<T> {
+    void onNext(Publisher<T> src, T value);
+    void onEnd(Publisher<T> src);
+}
+
+class ConcreteSubs1<T> implements Subscriber<T> {
+    void onNext(Publisher<T> src, T value);
+    void onEnd(Publisher<T> src);
+}
+
+class ConcreteSubs2<T> implements Subscriber<T> {
+    void onNext(Publisher<T> src, T value);
+    void onEnd(Publisher<T> src);
+}
+
+Publisher o--> "*" Subscriber : subscribers
+ConcreteSubs1 ..> Publisher : subscribe
+ConcreteSubs2 ..> Publisher : subscribe
+@enduml

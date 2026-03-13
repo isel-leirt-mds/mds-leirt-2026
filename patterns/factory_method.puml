@@ -7,6 +7,10 @@ class Creator {
     +genericOper2()
     createProduct()
 }
+note top of Creator
+    genericOpers calls createProduct
+end note
+
 
 interface Product {
     doStuff()
@@ -19,6 +23,8 @@ class ConcreteProductA {
 class ConcreteProductB {
     doStuff()
 }
+
+
 Product <|.. ConcreteProductA
 Product <|.. ConcreteProductB
 
@@ -33,4 +39,7 @@ class ConcreteCreatorB {
 
 Creator <|-- ConcreteCreatorA
 Creator <|-- ConcreteCreatorB
+Client -> Creator : createProduct()
+
+
 @enduml

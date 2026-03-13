@@ -20,11 +20,15 @@ class ConcreteStrategy2 {
   +execute(data)
 }
 
-Strategy <|... ConcreteStrategy1
-Strategy <|... ConcreteStrategy2
+Strategy <|.. ConcreteStrategy1
+Strategy <|.. ConcreteStrategy2
 
 Context o--> Strategy : strategy
 
 Client -> Context
 
+note right of Context
+    doSomething uses the strategy
+    received at construction
+end note
 @enduml
