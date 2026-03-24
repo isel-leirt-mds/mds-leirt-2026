@@ -1,4 +1,4 @@
-package pt.isel.mds.reflection.entities;
+package pt.isel.mds.reflection;
 
 public class A implements X {
     private int v = 3;

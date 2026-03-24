@@ -1,7 +1,6 @@
 package pt.isel.mds.reflection;
 
 import org.junit.jupiter.api.Test;
-import pt.isel.mds.reflection.entities.*;
 
 
 import java.lang.reflect.Field;
