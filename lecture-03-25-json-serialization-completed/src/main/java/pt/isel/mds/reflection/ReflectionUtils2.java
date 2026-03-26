@@ -1,6 +1,7 @@
 package pt.isel.mds.reflection;
 
 import org.json.JSONObject;
+import pt.isel.mds.reflection.exceptions.ClassAccessException;
 import pt.isel.mds.reflection.exceptions.ConstructorAccessException;
 import pt.isel.mds.reflection.exceptions.FieldAccessException;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 import static pt.isel.mds.utils.Utils.TODO;
 
-public class ReflectionUtils {
+public class ReflectionUtils2 {
 
     /**
      * Check if a class is the same or a subclass of another class
@@ -81,18 +82,9 @@ public class ReflectionUtils {
     }
 
     /**
-     * fields
+     * general members characteristics
+     * (now just "isStatic" but of  courese it can be extended for your needs)
      */
-    public static List<Field> getAllFields(Class<?> cls) {
-        Class<?> currClass = cls;
-        List<Field> fields = new ArrayList<>();
-        while(currClass != Object.class) {
-            var f = currClass.getDeclaredFields();
-            fields.addAll(Arrays.asList(f));
-            currClass = currClass.getSuperclass();
-        }
-        return fields;
-    }
 
     public static boolean isStatic(Member member) {
         return Modifier.isStatic(member.getModifiers());
@@ -114,6 +106,29 @@ public class ReflectionUtils {
         return null;
     }
 
+    /**
+     * fields
+     */
+
+
+    /**
+     * get all fields (private, public, protected, static or from instance),
+     * declared in the class or inherited
+     * @param cls
+     * @return
+     */
+    public static List<Field> getAllFields(Class<?> cls) {
+        Class<?> currClass = cls;
+        List<Field> fields = new ArrayList<>();
+        while(currClass != Object.class) {
+            var f = currClass.getDeclaredFields();
+            fields.addAll(Arrays.asList(f));
+            currClass = currClass.getSuperclass();
+        }
+        return fields;
+    }
+
+
     public static Object getField(Field f, Object obj)  {
         try {
             f.setAccessible(true);
@@ -134,41 +149,102 @@ public class ReflectionUtils {
         }
     }
 
-    public  <T> T createInstance(Class<T> cls) {
+    public static Class<?> clsForName(String clsName)  {
         try {
-            Constructor ctor = cls.getConstructor();
-            return (T) ctor.newInstance();
+            return Class.forName(clsName);
         }
-        catch(NoSuchMethodException  | InstantiationException |
-                IllegalArgumentException | IllegalAccessException |
-                InvocationTargetException e) {
+        catch( ClassNotFoundException e) {
+            throw new ClassAccessException();
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> T createInstance(Class<T> cls) {
+        try {
+            return (T) cls.getConstructor().newInstance();
+        }
+        catch( NoSuchMethodException |
+               IllegalAccessException | InvocationTargetException  |InstantiationException e) {
             throw new ConstructorAccessException(e);
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> T createInstance(String clsName) {
+
+        return (T) createInstance(clsForName(clsName));
+    }
 
     // serialization
+
+    @SuppressWarnings("unchecked")
     private static void saveFieldToJson(Field f, Object obj, JSONObject jo) {
         if (isStatic(f)) return;
+
         var fType = f.getType();
         var fValue = getField(f, obj);
         var fName = f.getName();
+
         if (fType == int.class) jo.put(fName, (int) fValue);
         else if (fType == double.class) jo.put(fName, (double) fValue);
         else if (fType == boolean.class) jo.put(fName, (boolean) fValue);
-        else if (fType == String.class) jo.put(fName, fValue.toString());
-        else if (Enum.class.isAssignableFrom(fType)) {
-            jo.put(fName, ((Enum)fValue).name());
+        else { // reference types
+            JSONObject jfo = null;
+            if (fValue == null) {
+                jfo = new JSONObject();
+                jfo.put("--isNull", true);
+            }
+            else if (fType == String.class) {
+                jfo = new JSONObject();
+                jfo.put("--value", fValue.toString());
+
+            }
+            else if (Enum.class.isAssignableFrom(fType)) {
+                jfo = new JSONObject();
+                // we can do the cast safely since we determined that is indeed an Enum
+                jfo.put("--value", ((Enum)fValue).name());
+            }
+            else {
+                jfo = saveToJson(fValue);
+            }
+            jo.put(fName, jfo);
         }
-        else {
-            jo.put(fName, saveToJson(fValue));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void getFieldFromJson(Field f, Class<?> objClass, Object obj, JSONObject jo) {
+        if (isStatic(f)) return;
+        var fType = f.getType();
+        var fName = f.getName();
+        f.setAccessible(true);
+        Object fValue = null;
+
+        if (fType == int.class) fValue = jo.getInt(fName);
+        else if (fType == double.class) fValue = jo.getDouble(fName);
+        else if (fType == boolean.class) fValue = jo.getBoolean(fName);
+        else { // reference types
+            var fjo = jo.getJSONObject(fName);
+            if (!fjo.has("--isNull")) {
+                if (fType == String.class) {
+                    fValue = fjo.getString("--value");
+                }
+                else if (Enum.class.isAssignableFrom(fType)) {
+                    fValue = fjo.getEnum((Class<Enum>) fType, "--value");
+                }
+                else {
+                    fValue = loadFromJson(jo.getJSONObject(fName));
+                }
+            }
         }
+        setField(f, obj, fValue);
     }
 
     public static JSONObject saveToJson(Object obj) {
         Class<?> objClass = obj.getClass();
         JSONObject jo = new JSONObject();
-        jo.put("__type", objClass.getName());
+
+        // save object type
+        jo.put("--type", objClass.getName());
 
         var fields = getAllFields(objClass);
 
@@ -179,7 +255,17 @@ public class ReflectionUtils {
     }
 
     public static Object loadFromJson(JSONObject jo) {
-        TODO();
-        return null;
+        var typeName = jo.getString("--type");
+        var objClass = clsForName(typeName);
+        var obj = createInstance(objClass);
+        System.out.println(typeName);
+
+        var fields = getAllFields(objClass);
+
+        for(var f : fields) {
+            getFieldFromJson(f, objClass, obj, jo);
+        }
+
+        return obj;
     }
 }

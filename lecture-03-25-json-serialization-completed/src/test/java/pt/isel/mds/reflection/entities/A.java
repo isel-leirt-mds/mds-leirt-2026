@@ -1,8 +1,8 @@
 package pt.isel.mds.reflection.entities;
 
+
 public class A implements X {
     private static int SV= 23;
-
 
     private int value = 3;
 
@@ -19,5 +19,11 @@ public class A implements X {
     @Override
     public String toString() {
         return "v=" + value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || o.getClass() != getClass()) return false;
+        return value == ((A) o).value;
     }
 }
