@@ -98,12 +98,11 @@ public class ReflectionUtils2Tests {
         C c = new C(4, 6.5, c0);
 
         var jo = saveToJson(c);
+
         var jsonText = jo.toString(4);
         println(jsonText);
-        jsonText=normalize(jsonText);
 
         C obj = (C) loadFromJson(jo);
-
         assertEquals(obj, c);
     }
 }

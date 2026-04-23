@@ -1,9 +1,13 @@
 package pt.isel.mds.reflection.entities;
 
 
+import pt.isel.mds.reflection.annotations.JsonName;
+
+
 public class A implements X {
     private static int SV= 23;
 
+    @JsonName(name="AlternateValue")
     private int value = 3;
 
     public A(int value) {

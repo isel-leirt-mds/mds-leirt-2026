@@ -1,6 +1,7 @@
 package pt.isel.mds.reflection;
 
 import org.json.JSONObject;
+import pt.isel.mds.reflection.annotations.JsonName;
 import pt.isel.mds.reflection.exceptions.ClassAccessException;
 import pt.isel.mds.reflection.exceptions.ConstructorAccessException;
 import pt.isel.mds.reflection.exceptions.FieldAccessException;
@@ -175,6 +176,13 @@ public class ReflectionUtils2 {
         return (T) createInstance(clsForName(clsName));
     }
 
+    private static String jsonName(Field f) {
+        var fName = f.getName();
+        JsonName annot = (JsonName) f.getAnnotation(JsonName.class);
+        if (annot == null) return fName;
+        return annot.name();
+    }
+
     // serialization
 
     @SuppressWarnings("unchecked")
@@ -183,7 +191,7 @@ public class ReflectionUtils2 {
 
         var fType = f.getType();
         var fValue = getField(f, obj);
-        var fName = f.getName();
+        var fName = jsonName(f);
 
         if (fType == int.class) jo.put(fName, (int) fValue);
         else if (fType == double.class) jo.put(fName, (double) fValue);
@@ -215,7 +223,7 @@ public class ReflectionUtils2 {
     public static void getFieldFromJson(Field f, Class<?> objClass, Object obj, JSONObject jo) {
         if (isStatic(f)) return;
         var fType = f.getType();
-        var fName = f.getName();
+        var fName = jsonName(f);
         f.setAccessible(true);
         Object fValue = null;
 
