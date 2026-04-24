@@ -22,7 +22,19 @@ public class Queries {
      */
     public static <T> Iterable<T>
     iterate(T seed, UnaryOperator<T> oper ) {
-        Iterator<T> iter = new Iterator<T>() {
+
+
+        // the next line returns an implementation of Iterable<T>, as desired,
+        // and equivalent to the commented code below:
+        //        Iterable<T> it =  new Iterable<T>() {
+        //            public Iterator<T> iterator() {
+        //                return new Iterator<T> {
+        //                      ....
+        //                };
+        //            }
+        //        };
+
+        return () ->  new Iterator<T>() {
             T current = seed;
 
             @Override
@@ -37,16 +49,6 @@ public class Queries {
                 return next;
             }
         };
-
-        // the next line returns an implementation of Iterable<T>, as desired,
-        // and equivalent to the commented code below:
-        //        Iterable<T> it =  new Iterable<T>() {
-        //            public Iterator<T> iterator() {
-        //                return iter;
-        //            }
-        //        };
-
-        return () -> iter;
     }
 
     /**
