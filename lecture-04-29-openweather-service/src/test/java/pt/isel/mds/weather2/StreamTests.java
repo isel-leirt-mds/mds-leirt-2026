@@ -3,7 +3,9 @@ package pt.isel.mds.weather2;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.LongStream;
 import java.util.stream.Stream;
 import java.util.stream.Stream.*;
 
@@ -14,14 +16,25 @@ public class StreamTests {
 
     @Test
     public void checkStreamMapAndFilterTest() {
-        var names = Stream.of("Carlos", "Ana", "Mourinho");
+        var names = List.of("Carlos", "Ana", "Mourinho").stream();
+        var namesArray = new String[] {"Carlos", "Ana", "Mourinho" };
+
+        var res1 = Arrays.stream(namesArray);
 
         var res = names
                 .filter(n -> n.length() > 6)
-                .map(n -> n.length());
+                .map(n -> n.length())
+                .toArray(n -> new String[n]);
 
-        res.forEach(v -> println(v));
+        for (var n : res) {
+            println(n);
+        }
+        //res.forEach(v -> println(v));
+
+        println("count= " + res.length);
 
     }
+
+
 
 }
