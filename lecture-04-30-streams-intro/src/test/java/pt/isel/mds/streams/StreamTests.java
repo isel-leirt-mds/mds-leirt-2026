@@ -51,11 +51,17 @@ public class StreamTests {
 //        }
 //    }
 
-    record Pair<T,U>(T first, U second) {};
+    record Pair<T,U>(T first, T second) {};
+    record IntPair(int first, int second) {};
 
     @Test
     public void produceCombinationsPairsOfIntsBteween1And10() {
-        Stream<Pair<Integer,Integer>> combs = null;
+       var combs =
+               IntStream.rangeClosed(1, 10)
+               .mapToObj(n1 ->
+                       IntStream.rangeClosed(n1+1, 10)
+                       .mapToObj(n2 -> new Pair(n1, n2)))
+               .flatMap(p -> p);
 
 
         var combsList = combs.toList();
@@ -63,7 +69,6 @@ public class StreamTests {
         for(var p : combsList) {
             System.out.println(p);
         }
-
         System.out.println("combs number = " + combsList.size());
     }
 }
