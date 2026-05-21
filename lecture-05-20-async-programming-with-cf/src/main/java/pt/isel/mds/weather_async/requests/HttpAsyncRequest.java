@@ -1,0 +1,26 @@
+package pt.isel.mds.weather_async.requests;
+
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.concurrent.CompletableFuture;
+
+public class HttpAsyncRequest implements AsyncRequest {
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public CompletableFuture<Reader> get(String path)  {
+        var client = HttpClient.newHttpClient();
+        var request = HttpRequest.newBuilder()
+            .uri(URI.create(path))
+            .GET()
+            .build();
+
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofInputStream())
+               .thenApply(resp -> new InputStreamReader(resp.body()));
+        
+    }
+}
